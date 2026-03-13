@@ -1,0 +1,4 @@
+tipo,elasticidad,desv,dist,rampa
+area_verde,0.04,0.005,normal,0.16
+cuerpo_agua,0.08,0.01,normal,0.16
+techo_verde,0.02,0.003,t,0.16
