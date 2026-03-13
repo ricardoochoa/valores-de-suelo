@@ -1,0 +1,67 @@
+# **Modelo de Evaluación de Impacto Urbano en el Valor del Suelo**
+
+## **1\. Importancia del Monitoreo del Valor del Suelo**
+
+Las inversiones en infraestructura y espacio público no solo transforman el entorno físico, sino que generan externalidades económicas directas sobre el territorio. Desarrollar metodologías simplificadas para monitorear los cambios en el valor de la propiedad es fundamental por tres razones clave:
+
+1. **Captura de Valor y Plusvalías:** Permite a las administraciones públicas identificar el beneficio privado generado por la inversión pública, facilitando el diseño de instrumentos de recuperación de plusvalías.  
+2. **Sostenibilidad Fiscal:** Ayuda a actualizar de manera técnica y transparente las bases gravables del impuesto predial, asegurando que los ingresos municipales crezcan en sintonía con el desarrollo urbano.  
+3. **Equidad y Planificación:** Ofrece datos objetivos para mitigar efectos secundarios como la gentrificación, permitiendo intervenciones políticas informadas en zonas con alta presión especulativa.
+
+## **2\. ¿Qué hace este código?**
+
+Este repositorio contiene un conjunto de herramientas en lenguaje R diseñadas para simular espacialmente el cambio porcentual en el valor del suelo tras una intervención urbana. El modelo se basa en funciones de decaimiento por distancia (rampas) y sensibilidad según el uso de suelo actual.
+
+### **Características Principales**
+
+* **Cálculo de Distancia Euclidiana:** Determina la proximidad de cada celda del territorio a la intervención.  
+* **Rampa de Decaimiento Lineal:** Aplica un impacto que disminuye un 16% por cada 100 metros (configurable).  
+* **Máscara de Sensibilidad:** El impacto solo se aplica a los usos de suelo definidos como sensibles (Residencial y Comercial), evitando distorsiones en zonas industriales o cuerpos de agua.  
+* **Simulación de Incertidumbre:** Utiliza distribuciones Normal y T de Student para calcular intervalos de confianza.
+
+## **3\. Estructura del Repositorio**
+
+| Archivo | Descripción |
+| :---- | :---- |
+| 1 Genera datos de prueba.R | Crea un entorno sintético (ráster y vectores) para probar el script. |
+| 2 Funciones del modelo.R | Contiene la lógica modular: carga, cálculo de impacto y estadística. |
+| 3 Principal.R | Orquestador que ejecuta el proceso completo y exporta resultados. |
+| especificaciones.md | Documentación técnica detallada de los requerimientos. |
+
+## **4\. Instrucciones de Uso**
+
+### **Requisitos Previos**
+
+Es necesario tener instalado R y los siguientes paquetes:
+
+install.packages(c("terra", "sf", "tidyverse", "pacman"))
+
+### **Ejecución**
+
+1. **Generar datos de ejemplo (Opcional):** Si no tienes datos propios, corre el script 1 para crear archivos .tif, .geojson y .csv de prueba.  
+2. **Configurar Insumos:** Asegúrate de tener el ráster de cobertura (clasificacion.tif) y las tablas de parámetros.  
+3. **Correr el Modelo:**  
+   source("3 Principal.R")
+
+## **5\. Lógica del Modelo**
+
+El impacto en el valor se rige por la siguiente fórmula de decaimiento:
+
+![][image1]Donde:
+
+* El impacto se trunca a ![][image2] si el factor de reducción supera el ![][image3].  
+* Se aplica una máscara booleana ![][image4] donde ![][image5] si el uso de suelo es Residencial o Comercial, y ![][image6] en caso contrario.
+
+*Desarrollado para la evaluación técnica de impactos urbanos y captura de valor.*
+
+[image1]: <data:image/png;base64,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>
+
+[image2]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAWCAYAAAD5Jg1dAAAA0UlEQVR4XmNgGEJAXFycW0FBYZe8vPx/ID4NFGJEV8MgIyMjDVIApDlBfGlpaWEQH8hkQlEIFPwKNG0lmtgZIP6BLAYS/C8nJxeGJlYFNRUCFBUV7aAKbZDUMQBtiIc6RwgmUAD1gBGyQqDGUJA4UN4cLADkNIEEgCbrISsEigVCDYiGCQRBrTZGVghyM9QAfZiAFlShM5rCNJC4iooKO1wQakUOkjqQ2yeAxJHFQAq/A/E1NLF3QHwfWQwEWJCtB7KjMExDBlDrTgBxMLrcsAIA0JM7h3+Qqf0AAAAASUVORK5CYII=>
+
+[image3]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAXCAYAAACf+8ZRAAACi0lEQVR4Xu2V24uNURjG99RcOOQQsrVPa59qh5JDklxQlFtR/gE3DhFFueFqXJFSXCGljAtq3Mmh1BQ5pMgp16MQUcOICeP3zl7f17vfvdYe5WJf2E89fet53met9a79HXYm08N/gFKptCSfzxesr1EulxdZr2twzn2EA/AkfGHrAvwKnLB+Gwgd5HS7rJ+A+hE4Cr/BHbYuKBQKdX7FB7IhvG3reNvgL6U/wHH2HYab4Rb0Z5nPnZiv56ageFkm+U2Eu21GgP8S3lL6ObyrM2y4XtZQernWAvQ7+EjpQ41GY5aMc7ncDC79HHop/mA6qRNiTdfr9dl2c4F4NDbX6JY75Zo/yH2dgXcSTX4DTW5MdJLRuiNiTeM9CS3k8+dkXKvVFoqWq87Q1E09l/F1p55jxsfITFP6cfSxCKFD0+LHmp70+bWOhjL4F7RPg2u0NjV5nC4l+q/wj01fi2TOWJ/mTrnmyzZaqVSWqWzb/Cnhm9gT8dsW1D6NDIcyvsEJvip5W9Mg84zMvET7OyTvwwqda4MsTnhvyA81pH2ug5HMae/321qCYrG4mszFRDN+y2EP+/EIl740bOGb3hfyIw2lfuyZxjsf8jVMvc/m0UNat0DCnHB/wP9iF/K+NP1KxjS9TvRUXw8LmV+tVucovdbm0WNat8A3fcD6NLTdLiQQj9oqreFWk/kKP2kvgW/wrPEW272iTfNvtMBvesLWBP5AO5U+bhfnADfwfipr8lYzr6y8FNR+W09g13X28cC44pr//2/giL++h+M6x5s93TfwkOtT+D0TeEF8bQxelTwH2WQzAmqvs9nsTOsLqN1z/tMrPWUC+3QFNDNgPQ3qQ/AHXGlrPfTQQ5fxB2E88ROQPiOOAAAAAElFTkSuQmCC>
+
+[image4]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAYCAYAAAAVibZIAAABNklEQVR4Xu2QvUpDQRCFY63t5RY3969VSWNtLaitrZXYiUUqi+AL+BJWgoKVzyBp8gRiEaKCoCD+gKAQv4HdZZi7iVW6e+CwO3POzOxsp9NioSiK4rQsy084dRxZjwb6WHmlrm89Aco4tZpHXdc99IF4eMyG1RvA+OAmz2yKNoG38zwBmLbhAbyZVUD+2p1ztwnANHRnP1aQJMkK6x45jzS9sp4GfCP5J7lnWdY1+recVVVtiY5vVetRYHxUdyna9zH34zRNl502jG3SgEyn8NDHUkTuXMVhVbf6/01luomlcOLuT1Zj4KXORWEn+9fkeb4J11V+R/Jstab9UWB8NvGLa3xn8iP7gBiWMN3DsU4SX8SK/QY2H4B4Bt/gK/yAv15jvV24p7xfyvsOf/jXE6+3aLEg/AEIbWzZqWo6NQAAAABJRU5ErkJggg==>
+
+[image5]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAYCAYAAACvKj4oAAABqElEQVR4Xu2WvUrEQBSF11rbkGJNZgNbqdhYWwtqa2sldiK4lYXYi2+gKLqFoGDlM8gK7hOIxbIqyiqIPyAqxHPdidy9bpJJYWIxHxzm5547MzeTQEoli8Xyb/B9f10p9QKFWk3p4SDeYl7Kq0lPnmD/cznXF3boUMYigiAYR3yNPHgwEzKeF9j7zOS8PcB4pW8kNgGxNnSa5MkTnGPF6CwwTUML0ElcAuaPdWv+1P6YLAU2dFvrl+A4zhBeiyXtoQKPpKcIshT4baLvivrlcnlYxN+orVQqUxSHb4THiyJLgdesTwXMR2P0l13XHdSxhtGCDPjrMdrHA9vD+rvo70Db0JbMT0KZFEi3gk0WozEl0MZs/PM6Uix1wRwxKlDp74+NqYi27t/IGIo/5HNFYlpgjyG6Jc/zJqExNj9D87jtUe5PAzkbWSTzk1CGBd6J8T0lQRdivpm6WM6kFTiA4CXU4pMYH/RL0kX/mi8S1b31sFqtOjKwCT1CD9Az9BnF8ArOQnPM+8q8T9AHvsPVKF4EOMM7dKu6f1/0d0VtB6pLr8VisVgsgi/vOqjfqWc50gAAAABJRU5ErkJggg==>
+
+[image6]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAYCAYAAACvKj4oAAAB+ElEQVR4Xu1UPUsDQRCNhZVWQoiQSy6x8wObqy2sBLWwsbUSsRHBVCJiK+I/UBQVERRsFEtLSZNCUBBEQogGAwriByiK8c1lNyyTuYjNxWIfPG7nzbudmdu7i0QsLCz+DZLJ5JLruq9gRTHHPSaQLxheui/DPWEAdQfBK9XHLs/XwWi6wnMa6XS6H/lF8uDBeDwfFlB/DvzWcSqVmm7Utw8Ybl11kjyngVwRPGvkCQPqILq5hkGXTa0GJIfBSfA4qHnoh+pKm4ueMIAhxqT60D4k3QcSWXXNSKZoNNqOV3JGeWjAA+4JC6h9KvUILS/pPnSCvitax+Nxh+Xf6YqnN0R5+HrMfJhA/SdpEGiXku4DiTtjTQNM6Bjr2Vgs1qZy2cBNAgD/TgC38cC2sP8m1hvgOrjG7+eg+lIP0M4l3T8VFJnSMZmosBHXXsegzcME6pekHqBdSLp/KiymIYpqXeI5DL9vamHDDf4GbyTdb5rHxEQiMQD2GfoI6TjtXtP/G3DPyl/I7+eAZ4H6EHT5LwqxzOIHMoLXTM+JGzQB1IfjOB1cA49MrcWtHmvBFBHvSYOoDer0ZgB93IN5HeOz6aTePM9r1YZVt/q7fQRfwC9txis4Co7rGLk3w/sMfmLDeZ1vFtzqm1YGT2g49NzFPRYWFhYWFgJ+AP39wjfmBngbAAAAAElFTkSuQmCC>
